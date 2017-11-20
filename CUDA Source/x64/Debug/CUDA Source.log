@@ -1,0 +1,10 @@
+﻿  Compiling CUDA source file kernel.cu...
+  
+  D:\GitHub\Particle-Simulator\CUDA Source>"D:\Programs\NVIDIA Corporation\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin\nvcc.exe" -gencode=arch=compute_30,code=\"sm_30,compute_30\" --use-local-env --cl-version 2017 -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x64" -x cu  -I"D:\Programs\NVIDIA Corporation\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include" -I"D:\Programs\NVIDIA Corporation\NVIDIA GPU Computing Toolkit\CUDA\v9.0\include"  -G   --keep-dir x64\Debug -maxrregcount=0  --machine 64 --compile -cudart static  -g   -DWIN32 -DWIN64 -D_DEBUG -D_CONSOLE -D_MBCS -Xcompiler "/EHsc /W3 /nologo /Od /FS /Zi /RTC1 /MDd " -o x64\Debug\kernel.cu.obj "D:\GitHub\Particle-Simulator\CUDA Source\kernel.cu" 
+  kernel.cu
+  CUDA Source.vcxproj -> D:\GitHub\Particle-Simulator\CUDA Source\x64\Debug\CUDA Source.exe
+  CUDA Source.vcxproj -> D:\GitHub\Particle-Simulator\CUDA Source\x64\Debug\CUDA Source.pdb (Partial PDB)
+  copy "D:\Programs\NVIDIA Corporation\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin\cudart*.dll" "D:\GitHub\Particle-Simulator\CUDA Source\x64\Debug\"
+  D:\Programs\NVIDIA Corporation\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin\cudart32_90.dll
+  D:\Programs\NVIDIA Corporation\NVIDIA GPU Computing Toolkit\CUDA\v9.0\bin\cudart64_90.dll
+          2 file(s) copied.
