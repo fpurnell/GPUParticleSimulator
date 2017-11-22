@@ -6,6 +6,8 @@
 #include <string.h>
 #include "resource.h"
 #include "targetver.h"
+#include "stdafx.h"
+#include "definitions.h"
 
 // Global variables
 
@@ -77,7 +79,7 @@ int CALLBACK WinMain(
     szTitle,
     WS_OVERLAPPEDWINDOW,
     CW_USEDEFAULT, CW_USEDEFAULT,
-    500, 100,
+    1000 + 5, 325,
     NULL,
     NULL,
     hInstance,
@@ -122,20 +124,43 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   PAINTSTRUCT ps;
   HDC hdc;
-  TCHAR greeting[] = _T("Hello, Windows desktop!");
+  TCHAR head1[] = _T("Choose from the following options:");
+  TCHAR comp10[] = _T("Computing Method");
+  TCHAR comp110[] = _T("Single-Core CPU");
+  TCHAR comp12[] = _T("Multi-Core CPU");
+  TCHAR comp13[] = _T("GPU");
+  TCHAR comp111[] = _T("Number of Threads");
+  TCHAR boundary10[] = _T("Boundary Options");
+  TCHAR boundary11[] = _T("");
+  TCHAR boundary120[] = _T("Square");
+  TCHAR boundary130[] = _T("Rectangle");
+  TCHAR boundary140[] = _T("Circle");
+  TCHAR boundary150[] = _T("Concentric Circle");
+  TCHAR boundary121[] = _T("Side Length");
+  TCHAR boundary131[] = _T("X Length");
+  TCHAR boundary132[] = _T("Y Lengh");
+  TCHAR boundary141[] = _T("Radius");
+  TCHAR boundary151[] = _T("Outer Radius");
+  TCHAR boundary152[] = _T("Inner Radius");
+  TCHAR PLACEHOLDER[] = _T("PLACEHOLDER");
 
   switch (message)
   {
   case WM_PAINT:
     hdc = BeginPaint(hWnd, &ps);
 
-    // Here your application is laid out.
-    // For this introduction, we just print out "Hello, Windows desktop!"
-    // in the top left corner.
     TextOut(hdc,
-      5, 5,
-      greeting, _tcslen(greeting));
-    // End application-specific layout section.
+      LEFT_COLUMN, HEADER_ROW,
+      head1, _tcslen(head1));
+    TextOut(hdc,
+      LEFT_COLUMN, ROW1,
+      comp10, _tcslen(comp10));
+    TextOut(hdc,
+      LEFT_COLUMN, ROW2,
+      comp110, _tcslen(comp110));
+    TextOut(hdc,
+      LEFT_COLUMN, ROW3,
+      boundary10, _tcslen(boundary10));
 
     EndPaint(hWnd, &ps);
     break;

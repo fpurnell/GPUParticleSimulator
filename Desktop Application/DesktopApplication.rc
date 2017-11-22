@@ -156,6 +156,24 @@ BEGIN
     IDC_DESKTOPAPPLICATION  "DESKTOPAPPLICATION"
 END
 
+STRINGTABLE
+BEGIN
+    IDS_COMPUTE_STRING_1    "Computing Method"
+    IDS_COMPUTE_STRING_2    "Single-Core CPU"
+    IDS_COMPUTE_STRING_3    "Multi-Core CPU"
+    IDS_COMPUTE_STRING_4    "GPU"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_COMPUTE_STRING_10   "Number of CPU Cores"
+END
+
+STRINGTABLE
+BEGIN
+    IDS_COMPUTE_STRING_HEADER "Choose from the following options"
+END
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

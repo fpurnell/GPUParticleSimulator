@@ -1,2 +1,2 @@
-﻿  stdafx.cpp
-d:\github\particle-simulator\desktop application\stdafx.cpp(9): error C2857: '#include' statement specified with the /Ycstdafx.h command-line option was not found in the source file
+﻿  DesktopApplication.cpp
+d:\github\particle-simulator\desktop application\desktopapplication.cpp(166): error C2065: 'shape10': undeclared identifier

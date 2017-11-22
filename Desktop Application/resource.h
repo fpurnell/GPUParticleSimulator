@@ -15,6 +15,13 @@
 #define IDR_MAINFRAME                   128
 #define IDI_ICON1                       129
 #define IDI_ICON2                       130
+#define IDS_COMPUTE_STRING_HEADER       150
+#define IDS_COMPUTE_STRING_1            201
+#define IDS_COMPUTE_STRING_2            202
+#define IDS_COMPUTE_STRING_3            203
+#define IDS_COMPUTE_STRING_4            204
+#define IDS_COMPUTE_STRING_5            210
+#define IDS_COMPUTE_STRING_10           210
 #define IDC_STATIC                      -1
 
 // Next default values for new objects
