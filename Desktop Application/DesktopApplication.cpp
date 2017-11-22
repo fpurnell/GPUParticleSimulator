@@ -8,6 +8,7 @@
 #include "targetver.h"
 #include "stdafx.h"
 #include "definitions.h"
+#include <CommCtrl.h>
 
 // Global variables
 
@@ -48,6 +49,18 @@ int CALLBACK WinMain(
   wcex.lpszClassName = szWindowClass;
   wcex.hIconSm = iconSmall;
 
+
+
+  //ClearType
+  /*SystemParametersInfo(SPI_SETFONTSMOOTHING,
+    TRUE,
+    0,
+    SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+  SystemParametersInfo(SPI_SETFONTSMOOTHINGTYPE,
+    0,
+    (PVOID)FE_FONTSMOOTHINGCLEARTYPE,
+    SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);*/
+
   if (!RegisterClassEx(&wcex))
   {
     MessageBox(NULL,
@@ -86,6 +99,7 @@ int CALLBACK WinMain(
     NULL
   );
 
+
   if (!hWnd)
   {
     MessageBox(NULL,
@@ -95,6 +109,27 @@ int CALLBACK WinMain(
 
     return 1;
   }
+
+  HWND headerW = CreateWindow(
+    WC_STATIC,
+    TEXT(""), LEFT_COLUMN, HEADER_ROW,
+    500, 50,
+    (int) hWnd, NULL, NULL, NULL, NULL
+    );
+  HWND ddW1 = CreateWindow(
+    WC_COMBOBOX,
+    TEXT(""), RIGHT_COLUMN, ROW3,
+    200, 23,
+    (int) hWnd, NULL, NULL, NULL,NULL);
+  TCHAR compStrings[3][20] = { TEXT("Single-Core CPU"), TEXT("Multi-Core CPU"), TEXT("GPU") };
+  TCHAR compCombo[16];
+  memset(&compCombo, 0, sizeof(compCombo));
+  for (int i = 0; i < 3; i++)
+  {
+    wcscpy_s(compCombo, sizeof(compCombo) / sizeof(TCHAR), (TCHAR*)compStrings[i]);
+    SendMessage(ddW1, (UINT)CB_ADDSTRING, (WPARAM)0, (LPARAM)compCombo);
+  }
+  SendMessage(ddW1, CB_SETCURSEL, (WPARAM)2, (LPARAM)0);
 
   // The parameters to ShowWindow explained:
   // hWnd: the value returned from CreateWindow
@@ -148,19 +183,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
   {
   case WM_PAINT:
     hdc = BeginPaint(hWnd, &ps);
+    
 
-    TextOut(hdc,
-      LEFT_COLUMN, HEADER_ROW,
-      head1, _tcslen(head1));
-    TextOut(hdc,
-      LEFT_COLUMN, ROW1,
-      comp10, _tcslen(comp10));
-    TextOut(hdc,
-      LEFT_COLUMN, ROW2,
-      comp110, _tcslen(comp110));
-    TextOut(hdc,
-      LEFT_COLUMN, ROW3,
-      boundary10, _tcslen(boundary10));
 
     EndPaint(hWnd, &ps);
     break;

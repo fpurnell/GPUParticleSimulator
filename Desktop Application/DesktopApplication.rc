@@ -49,11 +49,28 @@ IDC_DESKTOPAPPLICATION MENU
 BEGIN
     POPUP "&File"
     BEGIN
+        MENUITEM "&Load Preferences",           ID_FILE_LOAD
+        MENUITEM "&Save Preferences",           ID_FILE_SAVE
         MENUITEM "E&xit",                       IDM_EXIT
     END
     POPUP "&Help"
     BEGIN
         MENUITEM "&About ...",                  IDM_ABOUT
+    END
+END
+
+IDR_MENU1 MENU
+BEGIN
+    POPUP "File"
+    BEGIN
+        MENUITEM "&Load Results",               ID_LOAD
+        MENUITEM "&Save Results",               ID_SAVE
+        MENUITEM SEPARATOR
+        MENUITEM "&Close Window",               ID_CLOSE
+    END
+    POPUP "About"
+    BEGIN
+        MENUITEM "About...",                    ID_ABOUT_ABOUT
     END
 END
 
@@ -75,15 +92,15 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
+IDD_ABOUTBOX DIALOGEX 0, 0, 171, 62
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Desktop Application"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
-    LTEXT           "Desktop Application, Version 1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2017",IDC_STATIC,42,26,114,8
-    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
+    LTEXT           "Desktop Application, Version 1.0",IDC_STATIC,50,14,114,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2017",IDC_STATIC,50,26,114,8
+    DEFPUSHBUTTON   "OK",IDOK,114,41,50,14,WS_GROUP
 END
 
 
@@ -98,7 +115,7 @@ BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 163
+        RIGHTMARGIN, 164
         TOPMARGIN, 7
         BOTTOMMARGIN, 55
     END

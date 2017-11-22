@@ -1,2 +1,3 @@
 ﻿  DesktopApplication.cpp
-d:\github\particle-simulator\desktop application\desktopapplication.cpp(166): error C2065: 'shape10': undeclared identifier
+  Desktop Application.vcxproj -> D:\GitHub\Particle-Simulator\Desktop Application\Debug\Desktop Application.exe
+  Desktop Application.vcxproj -> D:\GitHub\Particle-Simulator\Desktop Application\Debug\Desktop Application.pdb (Partial PDB)
