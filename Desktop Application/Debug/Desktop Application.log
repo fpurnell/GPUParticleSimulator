@@ -1,4 +1,2 @@
 ﻿  stdafx.cpp
-  DesktopApplication.cpp
-  Desktop Application.vcxproj -> D:\GitHub\Particle-Simulator\Desktop Application\Debug\Desktop Application.exe
-  Desktop Application.vcxproj -> D:\GitHub\Particle-Simulator\Desktop Application\Debug\Desktop Application.pdb (Partial PDB)
+d:\github\particle-simulator\desktop application\stdafx.cpp(9): error C2857: '#include' statement specified with the /Ycstdafx.h command-line option was not found in the source file
