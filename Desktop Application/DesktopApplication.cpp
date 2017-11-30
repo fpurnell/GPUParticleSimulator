@@ -33,6 +33,8 @@ int CALLBACK WinMain(
   HICON icon, iconSmall;
   icon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
   iconSmall = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+  HMENU mainMenu;
+  mainMenu = LoadMenu(hInstance, MAKEINTRESOURCE(IDI_DESKTOPAPPLICATION));
 
   WNDCLASSEX wcex;
 
@@ -77,30 +79,20 @@ int CALLBACK WinMain(
   // Store instance handle in our global variable
   hInst = hInstance;
 
-  // The parameters to CreateWindow explained:
-  // szWindowClass: the name of the application
-  // szTitle: the text that appears in the title bar
-  // WS_OVERLAPPEDWINDOW: the type of window to create
-  // CW_USEDEFAULT, CW_USEDEFAULT: initial position (x, y)
-  // 500, 100: initial size (width, length)
-  // NULL: the parent of this window
-  // NULL: this application does not have a menu bar
-  // hInstance: the first parameter from WinMain
-  // NULL: not used in this application
-  HWND hWnd = CreateWindow(
+  HWND mainW = CreateWindow(
     szWindowClass,
     szTitle,
-    WS_OVERLAPPEDWINDOW,
+    WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
     CW_USEDEFAULT, CW_USEDEFAULT,
     1000 + 5, 325,
     NULL,
-    NULL,
+    mainMenu,
     hInstance,
     NULL
   );
 
 
-  if (!hWnd)
+  if (!mainW)
   {
     MessageBox(NULL,
       _T("Call to CreateWindow failed!"),
@@ -110,17 +102,29 @@ int CALLBACK WinMain(
     return 1;
   }
 
+  HWND resultsW = CreateWindow(
+    TEXT(""),
+    TEXT(""),
+    WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
+    CW_USEDEFAULT, CW_USEDEFAULT,
+    1000 + 5, 325,
+    NULL,
+    NULL,
+    hInstance,
+    NULL
+  );
+
   HWND headerW = CreateWindow(
     WC_STATIC,
     TEXT(""), LEFT_COLUMN, HEADER_ROW,
-    500, 50,
-    (int) hWnd, NULL, NULL, NULL, NULL
-    );
+    50, 50,
+    (int) mainW, NULL, NULL, NULL, NULL
+  );
   HWND ddW1 = CreateWindow(
     WC_COMBOBOX,
     TEXT(""), RIGHT_COLUMN, ROW3,
-    200, 23,
-    (int) hWnd, NULL, NULL, NULL,NULL);
+    50, 23,
+    (int) mainW, NULL, NULL, NULL, NULL);
   TCHAR compStrings[3][20] = { TEXT("Single-Core CPU"), TEXT("Multi-Core CPU"), TEXT("GPU") };
   TCHAR compCombo[16];
   memset(&compCombo, 0, sizeof(compCombo));
@@ -132,11 +136,15 @@ int CALLBACK WinMain(
   SendMessage(ddW1, CB_SETCURSEL, (WPARAM)2, (LPARAM)0);
 
   // The parameters to ShowWindow explained:
-  // hWnd: the value returned from CreateWindow
+  // mainW: the value returned from CreateWindow
   // nCmdShow: the fourth parameter from WinMain
-  ShowWindow(hWnd,
+  ShowWindow(mainW,
     nCmdShow);
-  UpdateWindow(hWnd);
+  ShowWindow(ddW1, nCmdShow);
+  ShowWindow(headerW, nCmdShow);
+  UpdateWindow(ddW1);
+  UpdateWindow(headerW);
+  UpdateWindow(mainW);
 
   // Main message loop:
   MSG msg;
@@ -155,7 +163,7 @@ int CALLBACK WinMain(
 //
 //  WM_PAINT    - Paint the main window
 //  WM_DESTROY  - post a quit message and return
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND mainW, UINT message, WPARAM wParam, LPARAM lParam)
 {
   PAINTSTRUCT ps;
   HDC hdc;
@@ -182,17 +190,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
   switch (message)
   {
   case WM_PAINT:
-    hdc = BeginPaint(hWnd, &ps);
-    
-
-
-    EndPaint(hWnd, &ps);
+    hdc = BeginPaint(mainW, &ps);
+    //hdc = BeginPaint(headerW, &ps);
+    //hdc = BeginPaint(ddW1, &ps);
+    EndPaint(mainW, &ps);
+    //EndPaint(headerW, &ps);
+    //EndPaint(ddW1, &ps);
+    break;
+  case WM_CLOSE:
+    PostQuitMessage(0);
     break;
   case WM_DESTROY:
     PostQuitMessage(0);
     break;
   default:
-    return DefWindowProc(hWnd, message, wParam, lParam);
+    return DefWindowProc(mainW, message, wParam, lParam);
     break;
   }
 
