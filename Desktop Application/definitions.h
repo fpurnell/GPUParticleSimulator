@@ -2,13 +2,17 @@
 #define LEFT_COLUMN 5
 #define RIGHT_COLUMN 500+5
 #define HEADER_ROW 5
+#define ROW_HEIGHT 25
+#define COLUMN_WIDTH 100
 #define ROW1 50+5
-#define ROW2 75+5
-#define ROW3 100+5
-#define ROW4 125+5
-#define ROW5 150+5
-#define ROW6 175+5
-#define ROW7 200+5
-#define ROW8 225+5
-#define ROW9 250+5
-#define ROW10 275+5
+#define ROW2 ROW1 + ROW_HEIGHT
+#define ROW3 ROW2 + ROW_HEIGHT
+#define ROW4 ROW3 + ROW_HEIGHT
+#define ROW5 ROW4 + ROW_HEIGHT
+#define ROW6 ROW5 + ROW_HEIGHT
+#define ROW7 ROW6 + ROW_HEIGHT
+#define ROW8 ROW7 + ROW_HEIGHT
+#define ROW9 ROW8 + ROW_HEIGHT
+#define ROW10 ROW9 + ROW_HEIGHT
+#define NUM_COLUMNS 4
+#define NUM_ROWS 10

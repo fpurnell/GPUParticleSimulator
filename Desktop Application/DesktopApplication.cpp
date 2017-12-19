@@ -10,18 +10,17 @@
 #include "definitions.h"
 #include <CommCtrl.h>
 
-// Global variables
-
-// The main window class name.
 static TCHAR szWindowClass[] = _T("Particle Simulator Handler");
-
-// The string that appears in the application's title bar.
 static TCHAR szTitle[] = _T("Particle Simulator Handler");
-
 HINSTANCE hInst;
 
-// Forward declarations of functions included in this code module:
+
+BOOL InitApp(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+BOOL CALLBACK EnumChildProc(HWND, LPARAM);
+BOOL InitInst(HINSTANCE, int);
+BOOL FuncMoveWindow(HWND[], HWND );
+
 
 int CALLBACK WinMain(
   _In_ HINSTANCE hInstance,
@@ -30,123 +29,12 @@ int CALLBACK WinMain(
   _In_ int       nCmdShow
 )
 {
-  HICON icon, iconSmall;
-  icon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
-  iconSmall = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
-  HMENU mainMenu;
-  mainMenu = LoadMenu(hInstance, MAKEINTRESOURCE(IDI_DESKTOPAPPLICATION));
-
-  WNDCLASSEX wcex;
-
-  wcex.cbSize = sizeof(WNDCLASSEX);
-  wcex.style = CS_HREDRAW | CS_VREDRAW;
-  wcex.lpfnWndProc = WndProc;
-  wcex.cbClsExtra = 0;
-  wcex.cbWndExtra = 0;
-  wcex.hInstance = hInstance;
-  wcex.hIcon = icon;
-  wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-  wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-  wcex.lpszMenuName = NULL;
-  wcex.lpszClassName = szWindowClass;
-  wcex.hIconSm = iconSmall;
-
-
-
-  //ClearType
-  /*SystemParametersInfo(SPI_SETFONTSMOOTHING,
-    TRUE,
-    0,
-    SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
-  SystemParametersInfo(SPI_SETFONTSMOOTHINGTYPE,
-    0,
-    (PVOID)FE_FONTSMOOTHINGCLEARTYPE,
-    SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);*/
-
-  if (!RegisterClassEx(&wcex))
-  {
-    MessageBox(NULL,
-      _T("Call to RegisterClassEx failed!"),
-      _T("Windows Desktop Guided Tour"),
-      NULL);
-
-    return 1;
-  }
+  InitApp(hInstance);
+  InitInst(hInstance, nCmdShow);
 
 
 
 
-  // Store instance handle in our global variable
-  hInst = hInstance;
-
-  HWND mainW = CreateWindow(
-    szWindowClass,
-    szTitle,
-    WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
-    CW_USEDEFAULT, CW_USEDEFAULT,
-    1000 + 5, 325,
-    NULL,
-    mainMenu,
-    hInstance,
-    NULL
-  );
-
-
-  if (!mainW)
-  {
-    MessageBox(NULL,
-      _T("Call to CreateWindow failed!"),
-      _T("Windows Desktop Guided Tour"),
-      NULL);
-
-    return 1;
-  }
-
-  HWND resultsW = CreateWindow(
-    TEXT(""),
-    TEXT(""),
-    WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
-    CW_USEDEFAULT, CW_USEDEFAULT,
-    1000 + 5, 325,
-    NULL,
-    NULL,
-    hInstance,
-    NULL
-  );
-
-  HWND headerW = CreateWindow(
-    WC_STATIC,
-    TEXT(""), LEFT_COLUMN, HEADER_ROW,
-    50, 50,
-    (int) mainW, NULL, NULL, NULL, NULL
-  );
-  HWND ddW1 = CreateWindow(
-    WC_COMBOBOX,
-    TEXT(""), RIGHT_COLUMN, ROW3,
-    50, 23,
-    (int) mainW, NULL, NULL, NULL, NULL);
-  TCHAR compStrings[3][20] = { TEXT("Single-Core CPU"), TEXT("Multi-Core CPU"), TEXT("GPU") };
-  TCHAR compCombo[16];
-  memset(&compCombo, 0, sizeof(compCombo));
-  for (int i = 0; i < 3; i++)
-  {
-    wcscpy_s(compCombo, sizeof(compCombo) / sizeof(TCHAR), (TCHAR*)compStrings[i]);
-    SendMessage(ddW1, (UINT)CB_ADDSTRING, (WPARAM)0, (LPARAM)compCombo);
-  }
-  SendMessage(ddW1, CB_SETCURSEL, (WPARAM)2, (LPARAM)0);
-
-  // The parameters to ShowWindow explained:
-  // mainW: the value returned from CreateWindow
-  // nCmdShow: the fourth parameter from WinMain
-  ShowWindow(mainW,
-    nCmdShow);
-  ShowWindow(ddW1, nCmdShow);
-  ShowWindow(headerW, nCmdShow);
-  UpdateWindow(ddW1);
-  UpdateWindow(headerW);
-  UpdateWindow(mainW);
-
-  // Main message loop:
   MSG msg;
   while (GetMessage(&msg, NULL, 0, 0))
   {
@@ -156,46 +44,226 @@ int CALLBACK WinMain(
 
   return (int)msg.wParam;
 }
+BOOL InitApp(HINSTANCE hInstance)
+{
+  WNDCLASSEX mwin;
+  {
+    mwin.cbSize = sizeof(WNDCLASSEX);
+    mwin.style = CS_HREDRAW | CS_VREDRAW;
+    mwin.lpfnWndProc = WndProc;
+    mwin.cbClsExtra = 0;
+    mwin.cbWndExtra = 0;
+    mwin.hInstance = hInstance;
+    mwin.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+    mwin.hCursor = LoadCursor(NULL, IDC_ARROW);
+    mwin.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    mwin.lpszMenuName = TEXT("MainMenu");
+    mwin.lpszClassName = TEXT("MainWindowClass");
+    mwin.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+  }
+  WNDCLASSEX rwin;
+  {
+    rwin.cbSize = sizeof(WNDCLASSEX);
+    rwin.style = CS_HREDRAW | CS_VREDRAW;
+    rwin.lpfnWndProc = WndProc;
+    rwin.cbClsExtra = 0;
+    rwin.cbWndExtra = 0;
+    rwin.hInstance = hInstance;
+    rwin.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1));
+    rwin.hCursor = LoadCursor(NULL, IDC_ARROW);
+    rwin.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    rwin.lpszMenuName = TEXT("ResultsMenu");
+    rwin.lpszClassName = TEXT("ResultsWindowClass");
+    rwin.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2));
+  }
+  WNDCLASSEX inchild;
+  {
+    inchild.lpszClassName = TEXT("InnerChildClass");
+    inchild.style = MDIS_ALLCHILDSTYLES;
+  }
+  return (RegisterClassEx(&mwin) && RegisterClassEx(&rwin) && RegisterClassEx(&inchild));
+}
+BOOL InitInst(HINSTANCE hInstance, int nCmdShow)
+{
+  /*
+  Child Windows used:
+  STATIC                DROPDOWN
+  Type of Computing     Single/Multi/GPU
+  STATIC                TEXTBOX (disabled)
+  Number of Cores       2
 
-//  FUNCTION: WndProc(HWND, UINT, WPARAM, LPARAM)
-//
-//  PURPOSE:  Processes messages for the main window.
-//
-//  WM_PAINT    - Paint the main window
-//  WM_DESTROY  - post a quit message and return
+  
+  
+  
+
+
+
+
+  */
+  HMENU MainMenu = LoadMenu(hInstance, MAKEINTRESOURCE(IDC_DESKTOPAPPLICATION));
+  HMENU ResultsMenu = LoadMenu(hInstance, MAKEINTRESOURCE(IDR_MENU1));
+  //RECT rc;
+
+
+  //ClearType
+  /*SystemParametersInfo(SPI_SETFONTSMOOTHING,
+  TRUE,
+  0,
+  SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);
+  SystemParametersInfo(SPI_SETFONTSMOOTHINGTYPE,
+  0,
+  (PVOID)FE_FONTSMOOTHINGCLEARTYPE,
+  SPIF_UPDATEINIFILE | SPIF_SENDCHANGE);*/
+
+  HWND mainW = CreateWindow(
+    TEXT("MainWindowClass"), TEXT("Partcle Simulation Handler"),
+    WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
+    CW_USEDEFAULT, CW_USEDEFAULT, 1000 + 5, 325,
+    NULL,    MainMenu,    hInstance,    NULL
+  );
+  if (!mainW)
+  {
+    MessageBox(NULL,
+      _T("Create Main Window Failed!"),
+      _T("Particle Simulation Handler"),
+      NULL);
+    return 1;
+  }
+
+  HWND resultsW = CreateWindow(
+    TEXT("ResultsWindowClass"),    TEXT(""),
+    WS_OVERLAPPEDWINDOW | WS_HSCROLL | WS_VSCROLL,
+    CW_USEDEFAULT, CW_USEDEFAULT,    1000 + 5, 325,
+    NULL,    ResultsMenu,    hInstance,    NULL
+  );
+  if (!resultsW)
+  {
+    MessageBox(NULL,
+      _T("Create Results Window Failed!"),
+      _T("Particle Simulation Handler"),
+      NULL);
+    return 1;
+  }
+
+  HWND textW1 = CreateWindow(
+    WC_STATIC, TEXT("textbox1"), SS_SIMPLE,
+    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+    mainW, NULL, NULL, NULL
+  );
+  HWND textW2 = CreateWindow(
+    WC_STATIC, TEXT("textbox2"), NULL,
+    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+    mainW, NULL, NULL, NULL
+  );
+  HWND textW3 = CreateWindow(
+    WC_STATIC, TEXT("textbox3"), NULL,
+    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+    mainW, NULL, NULL, NULL
+  );
+  HWND textW4 = CreateWindow(
+    WC_STATIC, TEXT("textbox4"), NULL,
+    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+    mainW, NULL, NULL, NULL
+  );
+  HWND ddW1 = CreateWindow(
+    WC_COMBOBOX,    TEXT("dropdown1"),    CBS_DROPDOWN | CBS_HASSTRINGS | WS_CHILD | WS_OVERLAPPED | WS_VISIBLE,
+    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+    mainW, NULL, NULL, NULL);
+  HWND childExW1 = CreateWindow(
+    TEXT(""),
+    TEXT(""),
+    WS_CHILD | WS_BORDER,
+    0, 0, 0, 0,
+    NULL,
+    NULL,
+    hInstance,
+    NULL
+  );
+
+  
+    //3
+    //4
+  TCHAR sz[160];
+  LoadString(hInst, IDS_COMPUTE_STRING_2, sz, sizeof(sz) / sizeof(TCHAR));
+  SendMessage(
+    ddW1,
+    (UINT)CB_ADDSTRING, 
+    (WPARAM)0, 
+    (LPARAM)sz);
+  LoadString(hInst, IDS_COMPUTE_STRING_3, sz, sizeof(sz) / sizeof(TCHAR));
+  SendMessage(
+    ddW1,
+    (UINT)CB_ADDSTRING,
+    (WPARAM)1,
+    (LPARAM)sz);
+  LoadString(hInst, IDS_COMPUTE_STRING_4, sz, sizeof(sz) / sizeof(TCHAR));
+  SendMessage(
+    ddW1,
+    (UINT)CB_ADDSTRING,
+    (WPARAM)2,
+    (LPARAM)sz);
+  SendMessage(ddW1, CB_SETCURSEL, (WPARAM)2, (LPARAM)0);
+
+  SetParent(textW1, mainW);
+  SetParent(textW2, mainW);
+  SetParent(textW3, mainW);
+  SetParent(textW4, mainW);
+  SetParent(ddW1, mainW);
+  
+  UpdateWindow(ddW1);
+  UpdateWindow(textW1);
+  UpdateWindow(textW2);
+  UpdateWindow(textW3);
+  UpdateWindow(textW4);
+  UpdateWindow(mainW);
+  UpdateWindow(childExW1);
+
+  
+  HWND children[] = { textW1, textW2, textW3, textW4, ddW1 };
+  FuncMoveWindow(children, mainW);
+
+  ShowWindow(mainW, nCmdShow);
+  ShowWindow(ddW1, nCmdShow);
+  ShowWindow(textW1, nCmdShow);
+  ShowWindow(textW2, nCmdShow);
+  ShowWindow(textW3, nCmdShow);
+  ShowWindow(textW4, nCmdShow);
+  ShowWindow(childExW1, nCmdShow);
+  
+  return true;
+
+}
 LRESULT CALLBACK WndProc(HWND mainW, UINT message, WPARAM wParam, LPARAM lParam)
 {
+
   PAINTSTRUCT ps;
   HDC hdc;
-  TCHAR head1[] = _T("Choose from the following options:");
-  TCHAR comp10[] = _T("Computing Method");
-  TCHAR comp110[] = _T("Single-Core CPU");
-  TCHAR comp12[] = _T("Multi-Core CPU");
-  TCHAR comp13[] = _T("GPU");
-  TCHAR comp111[] = _T("Number of Threads");
-  TCHAR boundary10[] = _T("Boundary Options");
-  TCHAR boundary11[] = _T("");
-  TCHAR boundary120[] = _T("Square");
-  TCHAR boundary130[] = _T("Rectangle");
-  TCHAR boundary140[] = _T("Circle");
-  TCHAR boundary150[] = _T("Concentric Circle");
-  TCHAR boundary121[] = _T("Side Length");
-  TCHAR boundary131[] = _T("X Length");
-  TCHAR boundary132[] = _T("Y Lengh");
-  TCHAR boundary141[] = _T("Radius");
-  TCHAR boundary151[] = _T("Outer Radius");
-  TCHAR boundary152[] = _T("Inner Radius");
-  TCHAR PLACEHOLDER[] = _T("PLACEHOLDER");
+  RECT rcClient;
+
 
   switch (message)
   {
+  case WM_COMMAND:
+    switch (LOWORD(wParam))
+    {
+    case IDM_EXIT:
+      PostQuitMessage(0);
+      break;
+    case ID_FILE_LOADDEFAULT:
+      break;
+    case ID_FILE_LOAD:
+      break;
+    case ID_FILE_SAVE:
+      break;
+    case IDM_ABOUT:
+      //DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), mainW, TEXT("About"));
+      break;
+    default:
+      return DefWindowProc(mainW, message, wParam, lParam);
+    }
   case WM_PAINT:
     hdc = BeginPaint(mainW, &ps);
-    //hdc = BeginPaint(headerW, &ps);
-    //hdc = BeginPaint(ddW1, &ps);
     EndPaint(mainW, &ps);
-    //EndPaint(headerW, &ps);
-    //EndPaint(ddW1, &ps);
     break;
   case WM_CLOSE:
     PostQuitMessage(0);
@@ -203,10 +271,85 @@ LRESULT CALLBACK WndProc(HWND mainW, UINT message, WPARAM wParam, LPARAM lParam)
   case WM_DESTROY:
     PostQuitMessage(0);
     break;
+  case WM_SIZE:
+    GetClientRect(mainW, &rcClient);
+    EnumChildWindows(mainW, EnumChildProc, (LPARAM)&rcClient);
+    return 0;
+    break;
   default:
     return DefWindowProc(mainW, message, wParam, lParam);
     break;
   }
 
   return 0;
+}
+BOOL CALLBACK EnumChildProc(HWND hwndChild, LPARAM lParam)
+{
+  LPRECT rcParent;
+  int idChild;
+  int i = 0;
+  idChild = GetWindowLong(hwndChild, GWL_ID);
+
+  switch (idChild)
+  {
+  case 0:
+    i = 0;
+    break;
+  case 1:
+    i = 1;
+    break;
+  case 2:
+    i = 2;
+    break;
+  default:
+    break;
+  }
+  rcParent = (LPRECT)lParam;
+  idChild = GetWindowLong(hwndChild, GWL_ID);
+
+  
+
+  return TRUE;
+}
+BOOL FuncMoveWindow(HWND children[], HWND mainW)
+{
+  RECT rcParent;
+  LPRECT rcClient = &rcParent;
+  GetClientRect(mainW, rcClient);
+  HWND textW1 = children[0];
+  HWND textW2 = children[1];
+  HWND textW3 = children[2];
+  HWND textW4 = children[3];
+  HWND ddW1 = children[4];
+  MoveWindow(textW1,
+    (rcClient->right / 4) * 0,
+    rcClient->top + ROW1,
+    rcClient->right / 4,
+    ROW_HEIGHT,
+    FALSE);
+  MoveWindow(textW2,
+    (rcClient->right / 4) * 0,
+    rcClient->top + ROW2,
+    rcClient->right / 4,
+    ROW_HEIGHT,
+    FALSE);
+  MoveWindow(textW3,
+    (rcClient->right / 4) * 2,
+    rcClient->top + ROW1,
+    rcClient->right / 4,
+    ROW_HEIGHT,
+    FALSE);
+  MoveWindow(textW4,
+    (rcClient->right / 4) * 2,
+    rcClient->top + ROW2,
+    rcClient->right / 4,
+    ROW_HEIGHT,
+    FALSE);
+  MoveWindow(ddW1,
+    (rcClient->right / 4) * 1,
+    rcClient->top + ROW1,
+    rcClient->right / 4,
+    ROW_HEIGHT,
+    FALSE);
+  return true;
 }

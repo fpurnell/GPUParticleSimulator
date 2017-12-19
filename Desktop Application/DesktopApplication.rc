@@ -49,8 +49,12 @@ IDC_DESKTOPAPPLICATION MENU
 BEGIN
     POPUP "&File"
     BEGIN
+        MENUITEM "Run",                         ID_FILE_RUN
+        MENUITEM SEPARATOR
+        MENUITEM "Load Default",                ID_FILE_LOADDEFAULT
         MENUITEM "&Load Preferences",           ID_FILE_LOAD
         MENUITEM "&Save Preferences",           ID_FILE_SAVE
+        MENUITEM SEPARATOR
         MENUITEM "E&xit",                       IDM_EXIT
     END
     POPUP "&Help"
